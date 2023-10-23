@@ -22,3 +22,7 @@ set_target_properties(vector PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_features(vector PUBLIC cxx_std_23)
 
 
+add_executable(vector_test
+    "tests.cc")
+target_link_libraries(vector_test gtest gtest_main vector)
+target_include_directories(vector_test PRIVATE "${CMAKE_SOURCE_DIR}")
