@@ -68,6 +68,30 @@ TEST(VectorTest, DivisionOperator) {
     }
 }
 
+TEST(CalculateAngleTest, NonZeroVectors) {
+    Vector<double> vec1(4, 0);
+    Vector<double> vec2(4, 0);
+    vec1[0] = 17;
+    vec1[1] = 35;
+    vec1[2] = -13;
+    vec1[3] = 7;
+
+    vec2[0] = 1;
+    vec2[1] = 14;
+    vec2[2] = -5;
+    vec2[3] = 9;
+
+    double result = CalculateAngle(vec1, vec2);
+    EXPECT_NEAR(28.7706, result, 1e-4);
+}
+
+TEST(CalculateAngleTest, ZeroVector) {
+    Vector<double> vec1(4, 0);
+    Vector<double> vec2(4, 6);
+
+    ASSERT_THROW(CalculateAngle(vec1, vec2), std::invalid_argument);
+}
+
 int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

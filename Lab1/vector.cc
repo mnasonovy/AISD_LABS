@@ -3,9 +3,10 @@
 #include <random>
 #include <stdexcept>
 
+const double kPi = 3.14159265358979323846;
+
 template<typename T>
 class Vector {
-
 private:
     T* elements_;
     size_t size_;
@@ -166,3 +167,22 @@ public:
         return os;
     }
 };
+
+template<typename T>
+double CalculateAngle(const Vector<T>& a, const Vector<T>& b) {
+    T dotProduct = a * b;
+    T magnitudes = std::sqrt((a * a) * (b * b));
+
+    if (magnitudes == T())
+    {
+        throw std::invalid_argument("Cannot calculate the angle with zero vector");
+    }
+
+    double cosine = dotProduct / magnitudes;
+
+    double angleInRadian = std::acos(cosine);
+
+    double angleInDegree = angleInRadian * (180.0 / kPi);
+
+    return angleInDegree;
+}
