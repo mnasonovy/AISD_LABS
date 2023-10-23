@@ -1,18 +1,20 @@
+#ifndef VECTOR_H_
+#define VECTOR_H_
+
 #include <cmath>
 #include <iostream>
 #include <random>
 #include <stdexcept>
 
+
 const double kPi = 3.14159265358979323846;
 
 template<typename T>
 class Vector {
-private:
-    T* elements_;
-    size_t size_;
-
 public:
     const double kEqualityEpsilon = 1e-9;
+
+
 
     explicit Vector(size_t dim, const T& value = T()) {
         if (dim > std::numeric_limits<std::size_t>::max()) {
@@ -166,6 +168,10 @@ public:
         os << ")";
         return os;
     }
+
+private:
+    T* elements_;
+    size_t size_;
 };
 
 template<typename T>
@@ -186,3 +192,7 @@ double CalculateAngle(const Vector<T>& a, const Vector<T>& b) {
 
     return angleInDegree;
 }
+
+
+
+#endif  

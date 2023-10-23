@@ -86,11 +86,12 @@ TEST(CalculateAngleTest, NonZeroVectors) {
 }
 
 TEST(CalculateAngleTest, ZeroVector) {
-    Vector<double> vec1(4, 0);
-    Vector<double> vec2(4, 6);
+    Vector<double> vec1(4,0);
+    Vector<double> vec2(4,7);
 
     ASSERT_THROW(CalculateAngle(vec1, vec2), std::invalid_argument);
 }
+
 
 int main(int argc, char** argv) {
     testing::InitGoogleTest(&argc, argv);
