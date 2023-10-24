@@ -16,6 +16,13 @@ FetchContent_Declare(googletest URL https://github.com/google/googletest/archive
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_library(vector
+add_library(linked_list
    "linked_list.cc")
+set_target_properties(linked_list PROPERTIES LINKER_LANGUAGE CXX)
+target_compile_features(linked_list PUBLIC cxx_std_23)
 
+
+add_executable(linked_list_test
+    "tests.cc")
+target_link_libraries(linked_list_test gtest gtest_main linked_list)
+target_include_directories(linked_list_test PRIVATE "${CMAKE_SOURCE_DIR}")
