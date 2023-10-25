@@ -2,103 +2,102 @@
 #include <random>
 #include <stdexcept>
 
+
 template<typename T>
 struct Node {
     T data;
     Node<T>* next;
     Node<T>* prev;
-    Node(const T& value) : data(value), next(nullptr), prev(nullptr) {}
-};
 
+    explicit Node(const T& value) : data(value), next(nullptr), prev(nullptr) {}
+};
 
 template<typename T>
 class LinkedList {
-private:
-    Node<T>* head_;
-    Node<T>* tail_;
-
 public:
-    LinkedList() : head_(nullptr), tail_(nullptr) {}
+    LinkedList()
+        : head_(nullptr), tail_(nullptr) {}
 
-    LinkedList(const LinkedList<T>& other) : head_(nullptr), tail_(nullptr) {
-        copyFrom(other);
+    explicit LinkedList(const LinkedList<T>& other)
+        : head_(nullptr), tail_(nullptr) {
+        CopyFrom(other);
     }
 
-    LinkedList(std::size_t count, int minValue, int maxValue) : head_(nullptr), tail_(nullptr) {
+    LinkedList(std::size_t count, int min_value, int max_value)
+        : head_(nullptr), tail_(nullptr) {
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<T> dist(minValue, maxValue);
-
+        std::uniform_int_distribution<T> dist(min_value, max_value);
         for (std::size_t i = 0; i < count; ++i) {
             T value = dist(gen);
-            push_tail(value);
+            PushTail(value);
         }
     }
 
     ~LinkedList() {
-        clear();
+        Clear();
     }
 
-    Node<T>* get_head()const {
+    Node<T>* GetHead() const {
         return head_;
     }
 
+   
     LinkedList<T>& operator=(const LinkedList<T>& other) {
         if (this != &other) {
-            clear();
-            copyFrom(other);
+            Clear();
+            CopyFrom(other);
         }
         return *this;
     }
 
-    void push_tail(const T& value) {
-        Node<T>* tmp = new Node<T>(value);
-        if (isEmpty()) {
-            head_ = tmp;
-            tail_ = tmp;
+    void PushTail(const T& value) {
+        Node<T>* temp = new Node<T>(value);
+        if (IsEmpty()) {
+            head_ = temp;
+            tail_ = temp;
         }
         else {
-            tail_->next = tmp;
-            tmp->prev = tail_;
-            tail_ = tmp;
+            tail_->next = temp;
+            temp->prev = tail_;
+            tail_ = temp;
         }
     }
 
-    void push_tail(const LinkedList<T>& other) {
-        Node<T>* tmp = other.head_;
-        while (tmp != nullptr) {
-            push_tail(tmp->data);
-            tmp = tmp->next;
+    void PushTail(const LinkedList<T>& other) {
+        Node<T>* temp = other.head_;
+        while (temp != nullptr) {
+            PushTail(temp->data);
+            temp = temp->next;
         }
     }
 
-    void push_head(const T& value) {
-        Node<T>* tmp = new Node<T>(value);
-        if (isEmpty()) {
-            head_ = tmp;
-            tail_ = tmp;
+    void PushHead(const T& value) {
+        Node<T>* temp = new Node<T>(value);
+        if (IsEmpty()) {
+            head_ = temp;
+            tail_ = temp;
         }
         else {
-            tmp->next = head_;
-            head_->prev = tmp;
-            head_ = tmp;
+            temp->next = head_;
+            head_->prev = temp;
+            head_ = temp;
         }
     }
 
-    void push_head(const LinkedList<T>& other) {
-        Node<T>* tmp = other.tail_;
-        while (tmp != nullptr) {
-            push_head(tmp->data);
-            tmp = tmp->prev;
+    void PushHead(const LinkedList<T>& other) {
+        Node<T>* temp = other.tail_;
+        while (temp != nullptr) {
+            PushHead(temp->data);
+            temp = temp->prev;
         }
     }
 
-    void pop_head() {
-        if (isEmpty()) {
+    void PopHead() {
+        if (IsEmpty()) {
             throw std::runtime_error("List is empty.");
         }
-
-        Node<T>* tmp = head_;
+        Node<T>* temp = head_;
         head_ = head_->next;
         if (head_ != nullptr) {
             head_->prev = nullptr;
@@ -106,15 +105,14 @@ public:
         else {
             tail_ = nullptr;
         }
-        delete tmp;
+        delete temp;
     }
 
-    void pop_tail() {
-        if (isEmpty()) {
+    void PopTail() {
+        if (IsEmpty()) {
             throw std::runtime_error("List is empty.");
         }
-
-        Node<T>* tmp = tail_;
+        Node<T>* temp = tail_;
         tail_ = tail_->prev;
         if (tail_ != nullptr) {
             tail_->next = nullptr;
@@ -122,112 +120,109 @@ public:
         else {
             head_ = nullptr;
         }
-        delete tmp;
+        delete temp;
     }
 
-    void delete_node(const T& value) {
-        if (isEmpty()) {
+    void DeleteNode(const T& value) {
+        if (IsEmpty()) {
             throw std::runtime_error("List is empty.");
         }
-
-        Node<T>* tmp = head_;
-        while (tmp != nullptr) {
-            if (tmp->data == value) {
-                if (tmp == head_) {
+        Node<T>* temp = head_;
+        while (temp != nullptr) {
+            if (temp->data == value) {
+                if (temp == head_) {
                     head_ = head_->next;
                     if (head_ != nullptr) {
                         head_->prev = nullptr;
                     }
                 }
-                else if (tmp == tail_) {
+                else if (temp == tail_) {
                     tail_ = tail_->prev;
                     if (tail_ != nullptr) {
                         tail_->next = nullptr;
                     }
                 }
                 else {
-                    tmp->prev->next = tmp->next;
-                    tmp->next->prev = tmp->prev;
+                    temp->prev->next = temp->next;
+                    temp->next->prev = temp->prev;
                 }
-
-                Node<T>* toDelete = tmp;
-                tmp = tmp->next;
-                delete toDelete;
+                Node<T>* node_to_delete = temp;
+                temp = temp->next;
+                delete node_to_delete;
             }
             else {
-                tmp = tmp->next;
+                temp = temp->next;
             }
         }
     }
 
     const T& operator[](std::size_t index) const {
-        if (isEmpty()) {
+        if (IsEmpty()) {
             throw std::runtime_error("List is empty.");
         }
-
         Node<T>* current = head_;
-        std::size_t i = 0;
-        while (current != nullptr && i < index) {
+        std::size_t iter = 0;
+        while (current != nullptr && iter < index) {
             current = current->next;
-            ++i;
+            ++iter;
         }
-
         if (current == nullptr) {
             throw std::out_of_range("Index out of range.");
         }
-
         return current->data;
     }
 
     T& operator[](std::size_t index) {
-        if (isEmpty()) {
+        if (IsEmpty()) {
             throw std::runtime_error("List is empty.");
         }
-
         Node<T>* current = head_;
-        std::size_t i = 0;
-        while (current != nullptr && i < index) {
+        std::size_t iter = 0;
+        while (current != nullptr && iter < index) {
             current = current->next;
-            ++i;
+            ++iter;
         }
-
         if (current == nullptr) {
             throw std::out_of_range("Index out of range.");
         }
-
         return current->data;
     }
 
-    void clear() {
+    void Clear() {
         Node<T>* current = head_;
         while (current != nullptr) {
-            Node<T>* toDelete = current;
+            Node<T>* node_to_delete = current;
             current = current->next;
-            delete toDelete;
+            delete node_to_delete;
         }
         head_ = nullptr;
         tail_ = nullptr;
     }
 
-    bool isEmpty() const {
+    bool IsEmpty() const {
         return head_ == nullptr && tail_ == nullptr;
     }
+
 private:
-    // Помощник для копирования списка
-    void copyFrom(const LinkedList<T>& other) {
-        Node<T>* otherNode = other.head_;
-        while (otherNode != nullptr) {
-            push_tail(otherNode->data);
-            otherNode = otherNode->next;
+    // Helper for copying the list.
+    void CopyFrom(const LinkedList<T>& other) {
+        Node<T>* temp = other.head_;
+        while (temp != nullptr) {
+            PushTail(temp->data);
+            temp = temp->next;
         }
     }
+
+private:
+    Node<T>* head_;
+    Node<T>* tail_;
 };
 
+// Template class HappyNumbers.
 template<typename T>
 class HappyNumbers {
 public:
-
-    static T squareDigits(T num) {
+    static T SquareDigits(T num) {
         T sum = 0, rem;
         while (num > 0) {
             rem = num % 10;
@@ -237,31 +232,29 @@ public:
         return sum;
     }
 
-    static bool isHappyNumber(T num) {
-        int maxIterations = 1000; 
+    static bool IsHappyNumber(T num) {
+        int max_iterations = 1000;
         int iterations = 0;
 
         while (true) {
             if (num == 1) {
                 return true;
             }
-            else if (num <= 0 || iterations >= maxIterations) {
+            if (num <= 0 || iterations >= max_iterations) {
                 return false;
             }
-            num = squareDigits(num);
-            iterations++;
+            num = SquareDigits(num);
+            ++iterations;
         }
     }
 
-
-    static void printUnhappyNumbers(const LinkedList<T>& list) {
-        if (list.isEmpty()) {
+    static void PrintUnhappyNumbers(const LinkedList<T>& list) {
+        if (list.IsEmpty()) {
             throw std::runtime_error("List is empty.");
         }
-
-        Node<T>* current = list.get_head();
+        Node<T>* current = list.GetHead();
         while (current != nullptr) {
-            if (!isHappyNumber(current->data)) {
+            if (!IsHappyNumber(current->data)) {
                 std::cout << current->data << " ";
             }
             current = current->next;
@@ -269,4 +262,3 @@ public:
         std::cout << "\n";
     }
 };
-
