@@ -117,5 +117,18 @@ TEST(LinkedListTest, Clear) {
     EXPECT_TRUE(list.isEmpty());
 }
 
+TEST(HappyNumbersTest, PrintUnhappyNumbers) {
+    LinkedList<int> list;
 
+    for (int i = 1; i <21; ++i) {
+        list.push_tail(i);
+    }
+
+    testing::internal::CaptureStdout();
+    HappyNumbers<int>::printUnhappyNumbers(list);
+    std::string output = testing::internal::GetCapturedStdout();
+
+    std::string expectedOutput = "2 3 4 5 6 8 9 11 12 14 15 16 17 18 20 \n";
+    ASSERT_EQ(output, expectedOutput);
+}
 
