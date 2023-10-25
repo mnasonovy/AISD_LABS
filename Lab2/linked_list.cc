@@ -27,7 +27,7 @@ public:
     LinkedList(std::size_t count, int minValue, int maxValue) : head_(nullptr), tail_(nullptr) {
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<int> dist(minValue, maxValue);
+        std::uniform_int_distribution<T> dist(minValue, maxValue);
 
         for (std::size_t i = 0; i < count; ++i) {
             T value = dist(gen);
@@ -37,6 +37,10 @@ public:
 
     ~LinkedList() {
         clear();
+    }
+
+    Node<T>* get_head()const {
+        return head_;
     }
 
     LinkedList<T>& operator=(const LinkedList<T>& other) {
@@ -218,3 +222,51 @@ private:
         }
     }
 };
+
+template<typename T>
+class HappyNumbers {
+public:
+
+    static T squareDigits(T num) {
+        T sum = 0, rem;
+        while (num > 0) {
+            rem = num % 10;
+            sum += (rem * rem);
+            num /= 10;
+        }
+        return sum;
+    }
+
+    static bool isHappyNumber(T num) {
+        int maxIterations = 1000; 
+        int iterations = 0;
+
+        while (true) {
+            if (num == 1) {
+                return true;
+            }
+            else if (num <= 0 || iterations >= maxIterations) {
+                return false;
+            }
+            num = squareDigits(num);
+            iterations++;
+        }
+    }
+
+
+    static void printUnhappyNumbers(const LinkedList<T>& list) {
+        if (list.isEmpty()) {
+            throw std::runtime_error("List is empty.");
+        }
+
+        Node<T>* current = list.get_head();
+        while (current != nullptr) {
+            if (!isHappyNumber(current->data)) {
+                std::cout << current->data << " ";
+            }
+            current = current->next;
+        }
+        std::cout << "\n";
+    }
+};
+
