@@ -203,6 +203,56 @@ public:
         return head_ == nullptr && tail_ == nullptr;
     }
 
+    size_t Size() const {
+        std::size_t size = 0;
+        Node<T>* current = head_;
+        while (current != nullptr) {
+            size++;
+            current = current->next;
+        }
+        return size;
+    }
+
+    void RemoveEveryNth(int n) {
+        if (n <= 1) {
+            return; 
+        }
+
+        Node<T>* current = head_;
+        int count = 1; 
+
+        while (current != nullptr) {
+            if (count % n == 0) {
+                Node<T>* node_to_delete = current;
+                current = current->next;
+
+                if (node_to_delete == head_) {
+                    head_ = head_->next;
+                    if (head_ != nullptr) {
+                        head_->prev = nullptr;
+                    }
+                }
+                else if (node_to_delete == tail_) {
+                    tail_ = tail_->prev;
+                    if (tail_ != nullptr) {
+                        tail_->next = nullptr;
+                    }
+                }
+                else {
+                    node_to_delete->prev->next = node_to_delete->next;
+                    node_to_delete->next->prev = node_to_delete->prev;
+                }
+
+                delete node_to_delete;
+            }
+            else {
+                current = current->next;
+            }
+
+            count++;
+        }
+    }
+
 private:
     // Helper for copying the list.
     void CopyFrom(const LinkedList<T>& other) {
@@ -218,47 +268,29 @@ private:
     Node<T>* tail_;
 };
 
-// Template class HappyNumbers.
-template<typename T>
-class HappyNumbers {
-public:
-    static T SquareDigits(T num) {
-        T sum = 0, rem;
-        while (num > 0) {
-            rem = num % 10;
-            sum += (rem * rem);
-            num /= 10;
-        }
-        return sum;
+void findUnluckyNumbersAndPrint(int N) {
+    LinkedList<int> numbers;
+
+    for (int i = 1; i <= N; ++i) {
+        numbers.PushTail(i);
     }
 
-    static bool IsHappyNumber(T num) {
-        int max_iterations = 1000;
-        int iterations = 0;
+    int step = 2;
+    int index = 0;
 
-        while (true) {
-            if (num == 1) {
-                return true;
-            }
-            if (num <= 0 || iterations >= max_iterations) {
-                return false;
-            }
-            num = SquareDigits(num);
-            ++iterations;
+    while (index < numbers.Size() && step <= N) {
+        numbers.RemoveEveryNth(step);
+        index++;
+        if (index < numbers.Size()) {
+            step = numbers[index];
         }
     }
 
-    static void PrintUnhappyNumbers(const LinkedList<T>& list) {
-        if (list.IsEmpty()) {
-            throw std::runtime_error("List is empty.");
-        }
-        Node<T>* current = list.GetHead();
-        while (current != nullptr) {
-            if (!IsHappyNumber(current->data)) {
-                std::cout << current->data << " ";
-            }
-            current = current->next;
-        }
-        std::cout << "\n";
+    Node<int>* current = numbers.GetHead();
+    while (current != nullptr) {
+        std::cout << current->data << " ";
+        current = current->next;
     }
-};
+
+    std::cout << std::endl;
+}

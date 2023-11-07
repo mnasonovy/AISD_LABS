@@ -124,17 +124,34 @@
         EXPECT_TRUE(list.IsEmpty());
     }
 
-    TEST(HappyNumbersTest, PrintUnhappyNumbers) {
+    TEST(RemoveEveryNthTest, Test1) {
         LinkedList<int> list;
-
-        for (int i = 1; i < 21; ++i) {
+        for (int i = 1; i <= 10; ++i) {
             list.PushTail(i);
         }
 
-        testing::internal::CaptureStdout();
-        HappyNumbers<int>::PrintUnhappyNumbers(list);
-        std::string output = testing::internal::GetCapturedStdout();
+        list.RemoveEveryNth(3); 
 
-        std::string expected_output = "2 3 4 5 6 8 9 11 12 14 15 16 17 18 20 \n";
-        EXPECT_EQ(output, expected_output);
+        Node<int>* current = list.GetHead();
+        LinkedList<int> expected;
+
+        expected.PushTail(1);
+        expected.PushTail(2);
+        expected.PushTail(4);
+        expected.PushTail(5);
+        expected.PushTail(7);
+        expected.PushTail(8);
+        expected.PushTail(10);
+
+        for (int i = 0; current != nullptr; ++i) {
+            EXPECT_EQ(expected[i], current->data);
+            current = current->next;
+        }
+    }
+
+    TEST(FindUnluckyNumbersTest, Test1) {
+        testing::internal::CaptureStdout(); 
+        findUnluckyNumbersAndPrint(100); 
+        std::string output = testing::internal::GetCapturedStdout();
+        EXPECT_EQ(output, "1 3 7 9 13 15 21 25 31 33 37 43 49 51 63 67 69 73 75 79 87 93 99 \n");
     }
