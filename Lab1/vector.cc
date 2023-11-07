@@ -1,61 +1,47 @@
 #ifndef VECTOR_H_
 #define VECTOR_H_
 
-#include <cmath>
 #include <iostream>
 #include <random>
 #include <stdexcept>
+#include <complex> 
+#include <cmath>
 
+using namespace std;
 
 const double kPi = 3.14159265358979323846;
 
-template<typename T>
+template <typename T>
 class Vector {
 public:
-    const double kEqualityEpsilon = 1e-9;
-
-
-
-    explicit Vector(size_t dim, const T& value = T()) {
-        if (dim > std::numeric_limits<std::size_t>::max()) {
-            throw std::invalid_argument("Dimension size is too large");
-        }
-        size_ = dim;
-        elements_ = new T[size_];
+    Vector(size_t dim, const T& value = T()) : size_(dim), elements_(new T[dim]) {
         for (size_t i = 0; i < size_; ++i) {
             elements_[i] = value;
         }
     }
 
-    Vector(size_t dim, T lower_bound, T upper_bound) {
-        if (dim > std::numeric_limits<std::size_t>::max()) {
-            throw std::invalid_argument("Dimension size is too large");
-        }
-        size_ = dim;
-        elements_ = new T[size_];
-
-
+    Vector(size_t dim, T lower_bound, T upper_bound) : size_(dim), elements_(new T[dim]) {
         std::random_device rd;
         std::mt19937 gen(rd());
 
-        if constexpr (std::is_integral<T>::value) {
-            std::uniform_int_distribution<T> dist(lower_bound, upper_bound);
+        if constexpr (is_integral<T>::value) {
+            uniform_int_distribution<T> dist(lower_bound, upper_bound);
             for (size_t i = 0; i < size_; ++i) {
                 elements_[i] = dist(gen);
             }
         }
-        else if constexpr (std::is_floating_point<T>::value) {
-            std::uniform_real_distribution<T> dist(lower_bound, upper_bound);
+        else if constexpr (is_floating_point<T>::value) {
+            uniform_real_distribution<T> dist(lower_bound, upper_bound);
             for (size_t i = 0; i < size_; ++i) {
                 elements_[i] = dist(gen);
             }
         }
         else {
-            throw std::invalid_argument("Type not supported");
+            throw invalid_argument("Type not supported");
         }
     }
 
-    Vector(const Vector& other) : Vector(other.size_) {
+    Vector(const Vector& other) : size_(other.size_), elements_(new T[other.size_]) {
         for (size_t i = 0; i < size_; ++i) {
             elements_[i] = other.elements_[i];
         }
@@ -65,10 +51,15 @@ public:
 
     Vector& operator=(const Vector& other) {
         if (this != &other) {
-            delete[] elements_;
-            size_ = other.size_;
-            elements_ = new T[size_];
-            std::copy_n(other.elements_, size_, elements_);
+            if (size_ != other.size_) {
+                delete[] elements_;
+                size_ = other.size_;
+                elements_ = new T[size_];
+            }
+
+            for (size_t i = 0; i < size_; ++i) {
+                elements_[i] = other.elements_[i];
+            }
         }
         return *this;
     }
@@ -77,21 +68,21 @@ public:
 
     T& operator[](size_t index) {
         if (index >= size_) {
-            throw std::out_of_range("Index out of range");
+            throw out_of_range("Index out of range");
         }
         return elements_[index];
     }
 
     const T& operator[](size_t index) const {
         if (index >= size_) {
-            throw std::out_of_range("Index out of range");
+            throw out_of_range("Index out of range");
         }
         return elements_[index];
     }
 
     Vector operator+(const Vector& other) const {
         if (size_ != other.size_) {
-            throw std::invalid_argument("Vectors must have the same dimension");
+            throw invalid_argument("Vectors must have the same dimension");
         }
         Vector result(size_);
         for (size_t i = 0; i < size_; ++i) {
@@ -102,7 +93,7 @@ public:
 
     Vector operator-(const Vector& other) const {
         if (size_ != other.size_) {
-            throw std::invalid_argument("Vectors must have the same dimension");
+            throw invalid_argument("Vectors must have the same dimension");
         }
         Vector result(size_);
         for (size_t i = 0; i < size_; ++i) {
@@ -113,7 +104,7 @@ public:
 
     T operator*(const Vector& other) const {
         if (size_ != other.size_) {
-            throw std::invalid_argument("Vectors must have the same dimension");
+            throw invalid_argument("Vectors must have the same dimension");
         }
         T result = T();
         for (size_t i = 0; i < size_; ++i) {
@@ -132,7 +123,7 @@ public:
 
     Vector operator/(const T& scalar) const {
         if (scalar == T()) {
-            throw std::invalid_argument("Cannot divide by zero");
+            throw invalid_argument("Cannot divide by zero");
         }
         Vector result(size_);
         for (size_t i = 0; i < size_; ++i) {
@@ -145,19 +136,19 @@ public:
         if (size_ != other.size_) {
             return false;
         }
-        return std::equal(elements_, elements_ + size_, other.elements_, [=](const auto& lhs, const auto& rhs) {
-            if constexpr (std::is_integral<T>::value) {
-                return lhs == rhs;
+
+        for (size_t i = 0; i < size_; ++i) {
+            if (elements_[i] != other.elements_[i]) {
+                return false;
             }
-            else {
-                return std::abs(lhs - rhs) < kEqualityEpsilon;
-            }
-            });
+        }
+
+        return true;
     }
 
     bool operator!=(const Vector& other) const { return !(*this == other); }
 
-    friend std::ostream& operator<<(std::ostream& os, const Vector& vector) {
+    friend ostream& operator<<(ostream& os, const Vector& vector) {
         os << "(";
         for (size_t i = 0; i < vector.size_; ++i) {
             os << vector.elements_[i];
@@ -174,25 +165,22 @@ private:
     size_t size_;
 };
 
-template<typename T>
+template <typename T>
 double CalculateAngle(const Vector<T>& a, const Vector<T>& b) {
     T dotProduct = a * b;
-    T magnitudes = std::sqrt((a * a) * (b * b));
+    T magnitudes = sqrt((a * a) * (b * b));
 
-    if (magnitudes == T())
-    {
-        throw std::invalid_argument("Cannot calculate the angle with zero vector");
+    if (magnitudes == T()) {
+        throw invalid_argument("Cannot calculate the angle with a zero vector");
     }
 
     double cosine = dotProduct / magnitudes;
 
-    double angleInRadian = std::acos(cosine);
+    double angleInRadian = acos(cosine);
 
     double angleInDegree = angleInRadian * (180.0 / kPi);
 
     return angleInDegree;
 }
 
-
-
-#endif  
+#endif

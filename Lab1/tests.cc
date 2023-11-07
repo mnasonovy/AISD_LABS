@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "vector.cc"
+#include <complex>
 
 
 TEST(VectorTest, Constructors) {
@@ -59,6 +60,23 @@ TEST(VectorTest, MultiplicationOperator) {
     EXPECT_EQ(dot, 18);
 }
 
+TEST(VectorTest, ComplexVectorScalarProduct) {
+    Vector<complex<double>> vector1(3);
+    vector1[0] = complex<double>(1.0, 2.0);
+    vector1[1] = complex<double>(3.0, 4.0);
+    vector1[2] = complex<double>(5.0, 6.0);
+
+    Vector<complex<double>> vector2(3);
+    vector2[0] = complex<double>(7.0, 8.0);
+    vector2[1] = complex<double>(9.0, 10.0);
+    vector2[2] = complex<double>(11.0, 12.0);
+
+    // ќжидаемый результат: (1+2i) * (7+8i) + (3+4i) * (9+10i) + (5+6i) * (11+12i)
+    complex<double> expected_result = complex<double>(-39.0, 214.0);
+    complex<double> result = vector1 * vector2;
+    EXPECT_EQ(result, expected_result);
+}
+
 TEST(VectorTest, DivisionOperator) {
     Vector<int> a(3, 6);
     Vector<int> b = a / 3;
@@ -90,6 +108,20 @@ TEST(CalculateAngleTest, ZeroVector) {
     Vector<double> vec2(4,7);
 
     ASSERT_THROW(CalculateAngle(vec1, vec2), std::invalid_argument);
+}
+
+TEST(VectorComparison, EqualVectors) {
+    Vector <std::complex<double>> vector1(3, std::complex<double>(1.0, 2.0));
+    Vector <std::complex<double>> vector2(3, std::complex<double>(1.0, 2.0));
+
+    EXPECT_TRUE(vector1 == vector2);
+}
+
+TEST(VectorComparison, UnequalVectors) {
+    Vector < std::complex<double>> vector1(3, std::complex<double>(1.0, 2.0));
+    Vector < std::complex<double>> vector2(3, std::complex<double>(3.0, 4.0));
+
+    EXPECT_FALSE(vector1 == vector2);
 }
 
 
