@@ -1,7 +1,10 @@
+#ifndef LINKED_LIST_H
+#define LINKED_LIST_H
+
 #include <iostream>
 #include <random>
 #include <stdexcept>
-
+#include <cstddef>
 
 template<typename T>
 struct Node {
@@ -42,7 +45,6 @@ public:
         return head_;
     }
 
-   
     LinkedList<T>& operator=(const LinkedList<T>& other) {
         if (this != &other) {
             Clear();
@@ -213,13 +215,16 @@ public:
         return size;
     }
 
+    /*‘ункци€ RemoveEveryNth удал€ет каждый n - й узел из св€зного списка, где n - параметр, переданный в функцию.
+     ќна проходит по списку и дл€ каждого n-го узла удал€ет этот узел, правильно обновл€€ указатели соседних узлов. 
+     ‘ункци€ учитывает случаи, когда узел дл€ удалени€ €вл€етс€ началом или концом списка, и избегает разыменовани€ нулевых указателей, провер€€ их наличие.*/ 
     void RemoveEveryNth(int n) {
         if (n <= 1) {
-            return; 
+            return;
         }
 
         Node<T>* current = head_;
-        int count = 1; 
+        int count = 1;
 
         while (current != nullptr) {
             if (count % n == 0) {
@@ -239,8 +244,12 @@ public:
                     }
                 }
                 else {
-                    node_to_delete->prev->next = node_to_delete->next;
-                    node_to_delete->next->prev = node_to_delete->prev;
+                    if (node_to_delete->prev != nullptr) {
+                        node_to_delete->prev->next = node_to_delete->next;
+                    }
+                    if (node_to_delete->next != nullptr) {
+                        node_to_delete->next->prev = node_to_delete->prev;
+                    }
                 }
 
                 delete node_to_delete;
@@ -253,8 +262,15 @@ public:
         }
     }
 
+
+    friend std::ostream& operator<<(std::ostream& os, const LinkedList<T>& list) {
+        for (const auto& element : list) {
+            os << element << " ";
+        }
+        return os;
+    }
+
 private:
-    // Helper for copying the list.
     void CopyFrom(const LinkedList<T>& other) {
         Node<T>* temp = other.head_;
         while (temp != nullptr) {
@@ -267,6 +283,8 @@ private:
     Node<T>* head_;
     Node<T>* tail_;
 };
+
+
 
 void findUnluckyNumbersAndPrint(int N) {
     LinkedList<int> numbers;
@@ -286,11 +304,13 @@ void findUnluckyNumbersAndPrint(int N) {
         }
     }
 
-    Node<int>* current = numbers.GetHead();
-    while (current != nullptr) {
-        std::cout << current->data << " ";
-        current = current->next;
+
+    for (std::size_t i = 0; i < numbers.Size(); ++i) {
+        std::cout << numbers[i] << " ";
     }
 
     std::cout << std::endl;
 }
+
+
+#endif // LINKED_LIST_H

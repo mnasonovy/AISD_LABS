@@ -113,13 +113,30 @@ public:
         return result;
     }
 
-    Vector operator*(const T& scalar) const {
-        Vector result(size_);
-        for (size_t i = 0; i < size_; ++i) {
-            result.elements_[i] = elements_[i] * scalar;
+    template <typename U>
+    auto operator*(const U& operand) const {
+        if constexpr (std::is_same_v<U, T>) {
+            // Scalar multiplication
+            Vector result(size_);
+            for (size_t i = 0; i < size_; ++i) {
+                result.elements_[i] = elements_[i] * operand;
+            }
+            return result;
         }
-        return result;
+        else if constexpr (std::is_same_v<U, std::complex<double>>) {
+            // Inner product with complex vector
+            if (size_ != operand.size_) {
+                throw std::invalid_argument("Vectors must have the same dimension");
+            }
+
+            std::complex<double> result = 0.0;
+            for (size_t i = 0; i < size_; ++i) {
+                result += elements_[i] * std::conj(operand.elements_[i]);
+            }
+            return result;
+        }
     }
+
 
     Vector operator/(const T& scalar) const {
         if (scalar == T()) {
