@@ -14,6 +14,7 @@ endif()
 add_library(sorting
     "include/stats.h"
     "include/selectionSort.h"
+    "include/quickSort.h"
 )
 
 set_target_properties(sorting PROPERTIES LINKER_LANGUAGE CXX)
