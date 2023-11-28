@@ -28,3 +28,8 @@ add_executable(sorting_test
     "src/sorting.cc")
 target_link_libraries(sorting_test gtest gtest_main sorting)
 target_include_directories(sorting_test PRIVATE "${CMAKE_SOURCE_DIR}")
+
+add_executable(task_test
+    "src/task.cc")
+target_link_libraries(task_test gtest gtest_main sorting)
+target_include_directories(task_test PRIVATE "${CMAKE_SOURCE_DIR}")

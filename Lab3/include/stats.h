@@ -26,8 +26,6 @@ struct Stats {
 };
 
 std::ostream& operator<<(std::ostream& stream, const Stats& stats) {
-    stream << "Comparison count: " << stats.comparison_count << std::endl;
-    stream << "Copy count: " << stats.copy_count << std::endl;
-    stream << std::endl;
+    stream << "Comparison count: " << stats.comparison_count <<" " << "Copy count: " << stats.copy_count << std::endl;
     return stream;
 }

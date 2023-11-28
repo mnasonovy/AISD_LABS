@@ -1,6 +1,6 @@
 #include <random>
 #include <chrono>
-#include "include/sorting_functions.h" 
+#include "../include/sorting_functions.h"
 
 std::vector<int> GenerateRandomArray(int size, int seed) {
     std::mt19937 rng(seed);
@@ -19,7 +19,6 @@ Stats RandomStats(int size) {
     for (size_t i = 0; i < count; ++i) {
         std::vector<int> vec = GenerateRandomArray(size, seed);
         average_stats += QuickSortWrapper(vec);
-        seed++;
     }
     average_stats.comparison_count /= count;
     average_stats.copy_count /= count;
