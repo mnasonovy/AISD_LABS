@@ -11,12 +11,19 @@ if(MSVC)
     endif()
 endif()
 
+include(FetchContent)
+FetchContent_Declare(googletest URL https://github.com/google/googletest/archive/6b63c98ac43efc992122f1da12aaf0a0e0658206.zip)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
 add_library(sorting
     "include/stats.h"
-    "include/selectionSort.h"
-    "include/quickSort.h"
-    "include/naturalMergeSort.h")
+     "include/sorting_functions.h")
 
 set_target_properties(sorting PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_features(sorting PUBLIC cxx_std_23)
 
+add_executable(sorting_test
+    "src/sorting.cc")
+target_link_libraries(sorting_test gtest gtest_main sorting)
+target_include_directories(sorting_test PRIVATE "${CMAKE_SOURCE_DIR}")
