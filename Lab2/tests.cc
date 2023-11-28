@@ -151,7 +151,7 @@
 
     TEST(FindUnluckyNumbersTest, Test1) {
         testing::internal::CaptureStdout(); 
-        findUnluckyNumbersAndPrint(100); 
+        findUnluckyNumbersAndPrint(1000); 
         std::string output = testing::internal::GetCapturedStdout();
         EXPECT_EQ(output, "1 3 7 9 13 15 21 25 31 33 37 43 49 51 63 67 69 73 75 79 87 93 99 \n");
     }
