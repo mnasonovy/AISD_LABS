@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 struct Stats {
     size_t comparison_count;
