@@ -18,7 +18,8 @@ FetchContent_MakeAvailable(googletest)
 
 add_library(sorting
     "include/stats.h"
-     "include/sorting_functions.h")
+     "include/sorting_functions.h"
+      "include/task_functions.h")
 
 set_target_properties(sorting PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_features(sorting PUBLIC cxx_std_23)
